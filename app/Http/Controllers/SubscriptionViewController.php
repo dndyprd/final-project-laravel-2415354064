@@ -13,8 +13,8 @@ class SubscriptionViewController extends Controller
     public function index()
     {
         $subscriptions  = Subscription::with(['customer', 'service'])->latest()->get();
-        $allCustomers   = Customer::orderBy('name')->get(['id', 'name']);
-        $allServices    = Service::orderBy('name')->get(['id', 'name']);
+        $allCustomers   = Customer::where('status', true)->orderBy('name')->get(['id', 'name']);
+        $allServices    = Service::where('status', true)->orderBy('name')->get(['id', 'name']);
 
         return view('subcription', compact('subscriptions', 'allCustomers', 'allServices'));
     }
