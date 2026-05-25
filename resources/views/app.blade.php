@@ -210,6 +210,67 @@
                 await apiFetch(endpoint, method, payload);
             });
 
+            // Handler Edit
+            document.addEventListener('erp:edit', async ({ detail: { resource, id } }) => {
+                const tpl = document.getElementById('erp-modal-tpl');
+                if (!tpl) return;
+
+                // Tampilkan modal dengan state loading
+                modalTitle.textContent = 'Memuat data...';
+                modalBody.innerHTML = '<div class="flex justify-center py-10"><i class="bx bx-loader-alt bx-spin text-3xl text-gray-400"></i></div>';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.classList.add('overflow-hidden');
+
+                try {
+                    const res = await fetch(`/api/${resource}/${id}`, {
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+                    });
+                    if (!res.ok) throw new Error('Gagal memuat data');
+
+                    const json = await res.json();
+                    const data = json.data ?? json;
+
+                    // Ganti judul Add → Edit
+                    const originalTitle = tpl.dataset.title ?? '';
+                    modalTitle.textContent = originalTitle.replace(/^Add\b/, 'Edit');
+
+                    // Clone template dan ubah ke mode edit
+                    modalBody.innerHTML = '';
+                    const clone = tpl.content.cloneNode(true);
+                    const form  = clone.querySelector('form[data-endpoint]');
+                    if (form) {
+                        form.dataset.endpoint = `/api/${resource}/${id}`;
+                        form.dataset.method   = 'PUT';
+                    }
+                    modalBody.appendChild(clone);
+
+                    // Pre-fill setiap field dengan data dari API
+                    const formEl = modalBody.querySelector('form');
+                    if (formEl && data) {
+                        Object.entries(data).forEach(([key, value]) => {
+                            const field = formEl.elements[key];
+                            if (!field) return;
+
+                            if (field.tagName === 'TEXTAREA') {
+                                field.value = value ?? '';
+                            } else if (field.type === 'date' && value) {
+                                // Format tanggal ke YYYY-MM-DD
+                                field.value = value.toString().substring(0, 10);
+                            } else if (typeof value === 'boolean') {
+                                field.value = value ? '1' : '0';
+                            } else {
+                                field.value = value ?? '';
+                            }
+                        });
+                    }
+
+                } catch (err) {
+                    alert(err.message);
+                    closeModal();
+                }
+            });
+
             // HELPER FETCH
             async function apiFetch(url, method, body = null) {
                 try {

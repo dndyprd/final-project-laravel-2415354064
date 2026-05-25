@@ -18,14 +18,14 @@ class SubscriptionController extends Controller
         return response()->json(['success' => true, 'data' => $subscriptions]);
     }
 
-    public function store(\Illuminate\Http\Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $data = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'service_id' => 'required|exists:services,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|string|in:active,inactive'
+            'service_id'  => 'required|exists:services,id',
+            'start_date'  => 'required|date',
+            'end_date'    => 'required|date|after_or_equal:start_date',
+            'status'      => 'required|string|in:active,inactive,trial,isolir,dismantle',
         ]);
 
         $subscription = Subscription::create($data);
@@ -72,17 +72,18 @@ class SubscriptionController extends Controller
         return response()->json(['data' => $subscriptions], 200);
     }
 
-    public function changeStatus(\Illuminate\Http\Request $request, $id)
+    public function changeStatus(Request $request, int $id): JsonResponse
     {
-        
-        $request->validate(['status' => 'required|string|in:active,inactive']);
-        
-        $subscription = \App\Models\Subscription::findOrFail($id);
+        $request->validate([
+            'status' => 'required|string|in:active,inactive,trial,isolir,dismantle',
+        ]);
+
+        $subscription = Subscription::findOrFail($id);
         $subscription->update(['status' => $request->status]);
-        
+
         return response()->json([
-            'message' => 'Status subscription berhasil diubah', 
-            'data' => $subscription
-        ], 200);
+            'message' => 'Status subscription berhasil diubah',
+            'data'    => $subscription,
+        ]);
     }
 }

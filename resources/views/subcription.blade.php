@@ -16,10 +16,9 @@
     </button>
 </div>
 
-{{-- Template form Add Subscription — hanya dibaca JS, tidak dirender ke UI --}}
+{{-- Template form Add Subscription --}}
 <template id="erp-modal-tpl" data-title="Add Subscription">
     <form data-endpoint="/api/subscriptions" data-method="POST" class="space-y-5">
-
         <div>
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Customer</label>
             <div class="relative">
@@ -34,7 +33,6 @@
                 <i class='bx bx-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'></i>
             </div>
         </div>
-
         <div>
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Service</label>
             <div class="relative">
@@ -49,7 +47,6 @@
                 <i class='bx bx-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'></i>
             </div>
         </div>
-
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-semibold text-gray-800 mb-1.5">Start Date</label>
@@ -64,7 +61,6 @@
                               focus:outline-none focus:ring-2 focus:ring-gray-300">
             </div>
         </div>
-
         <div>
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Status</label>
             <div class="relative">
@@ -81,7 +77,6 @@
                 <i class='bx bx-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'></i>
             </div>
         </div>
-
     </form>
 </template>
 
@@ -99,17 +94,31 @@
         </thead>
         <tbody>
             @forelse($subscriptions as $sub)
-            <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
+            @php
+                $subStatus = strtolower($sub->status);
 
+                $allActions = [
+                    'active'    => ['icon' => 'bx-key',       'label' => 'Active',     'action' => 'status:active'],
+                    'inactive'  => ['icon' => 'bx-power-off',  'label' => 'Deactivate', 'action' => 'status:inactive'],
+                    'trial'     => ['icon' => 'bx-time',      'label' => 'Trial',      'action' => 'status:trial'],
+                    'isolir'    => ['icon' => 'bx-block',     'label' => 'Isolir',     'action' => 'status:isolir'],
+                    'dismantle' => ['icon' => 'bx-x-circle',  'label' => 'Dismantle',  'action' => 'status:dismantle', 'danger' => true],
+                ];
+
+                $availableActions = array_values(array_filter(
+                    $allActions,
+                    fn($key) => $key !== $subStatus,
+                    ARRAY_FILTER_USE_KEY
+                ));
+            @endphp
+            <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
                 <td class="px-5 py-4 text-sm text-gray-800">{{ $sub->customer?->name ?? '-' }}</td>
                 <td class="px-5 py-4 text-sm text-gray-800">{{ $sub->service?->name ?? '-' }}</td>
-
                 <td class="px-5 py-4 text-sm text-gray-600">
                     {{ \Carbon\Carbon::parse($sub->start_date)->format('j M Y') }}
                     –
                     {{ \Carbon\Carbon::parse($sub->end_date)->format('j M Y') }}
                 </td>
-
                 <td class="px-5 py-4">
                     @php
                         $statusMap = [
@@ -119,24 +128,25 @@
                             'dismantle' => ['label' => 'Dismantle', 'class' => 'bg-gray-100 text-gray-500'],
                             'inactive'  => ['label' => 'Inactive',  'class' => 'bg-gray-100 text-gray-500'],
                         ];
-                        $badge = $statusMap[strtolower($sub->status)] ?? ['label' => ucfirst($sub->status), 'class' => 'bg-gray-100 text-gray-500'];
+                        $badge = $statusMap[$subStatus] ?? ['label' => ucfirst($sub->status), 'class' => 'bg-gray-100 text-gray-500'];
                     @endphp
                     <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold {{ $badge['class'] }}">
                         {{ $badge['label'] }}
                     </span>
                 </td>
 
-                @include('function', [
-                    'resource' => 'subscriptions',
-                    'id'       => $sub->id,
-                    'actions'  => [
-                        ['icon' => 'bx-key',       'label' => 'Active',     'action' => 'status:active'],
-                        ['icon' => 'bx-power-off',  'label' => 'Deactivate', 'action' => 'status:inactive'],
-                        ['icon' => 'bx-time',      'label' => 'Trial',      'action' => 'status:trial'],
-                        ['icon' => 'bx-block',     'label' => 'Isolir',     'action' => 'status:isolir'],
-                        ['icon' => 'bx-x-circle',  'label' => 'Dismantle',  'action' => 'status:dismantle', 'danger' => true],
-                    ],
-                ])
+                {{-- Dismantle: tidak ada aksi yang bisa dilakukan --}}
+                @if($subStatus === 'dismantle')
+                    <td class="px-5 py-4">
+                        <span class="text-xs text-gray-300 select-none">—</span>
+                    </td>
+                @else
+                    @include('function', [
+                        'resource' => 'subscriptions',
+                        'id'       => $sub->id,
+                        'actions'  => $availableActions,
+                    ])
+                @endif
             </tr>
             @empty
             <tr>
