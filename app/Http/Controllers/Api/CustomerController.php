@@ -74,16 +74,25 @@ class CustomerController extends Controller
         return response()->json(['data' => $customers], 200);
     }
 
-    public function changeStatus(Request $request, $id)
+    public function activate(int $id): JsonResponse
     {
-        $request->validate(['status' => 'required|boolean']);
-        
-        $customer = Customer::findOrFail($id);
-        $customer->update(['status' => $request->status]);
-        
-        return response()->json([
-            'message' => 'Status customer berhasil diubah', 
-            'data' => $customer
-        ], 200);
+        $customer = Customer::find($id);
+        if (!$customer) {
+            return response()->json(['success' => false, 'message' => 'Not found'], 404);
+        }
+
+        $customer->update(['status' => true]);
+        return response()->json(['success' => true, 'message' => 'Customer activated', 'data' => $customer]);
+    }
+
+    public function deactivate(int $id): JsonResponse
+    {
+        $customer = Customer::find($id);
+        if (!$customer) {
+            return response()->json(['success' => false, 'message' => 'Not found'], 404);
+        }
+
+        $customer->update(['status' => false]);
+        return response()->json(['success' => true, 'message' => 'Customer deactivated', 'data' => $customer]);
     }
 }
