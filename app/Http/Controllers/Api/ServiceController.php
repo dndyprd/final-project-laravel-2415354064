@@ -6,204 +6,196 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Service;
-use Illuminate\Http\JsonResponse;
+use illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // Status yang tersedia
-    private const STATUSES = ['active', 'inactive'];
-
-    /**
-     * GET /api/services
-     * Ambil semua service, bisa filter ?status=active|inactive
-     */
     public function index(Request $request): JsonResponse
     {
         $status = $request->query('status');
+
         $query = Service::query();
 
         if ($status !== null) {
             if (!in_array($status, ['active', 'inactive'], true)) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors'  => [
-                        'status' => ['The selected status is invalid.'],
-                    ],
-                ], 422);
+                    "success" => false,
+                    "message" => "Validation failed",
+                    "error" => [
+                        'status' => "The selected status is invalid."
+                    ]
+                ], 400);
             }
+
             $query->where('status', $status === 'active');
+
         }
 
         $services = $query->latest()->get();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Services retrieved successfully',
-            'data'    => $services,
+            "success" => true,
+            "message" => "Services retrieved successfully",
+            "data" => $services
         ]);
     }
 
-    /**
-     * POST /api/services
-     * Buat service baru
-     */
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name'        => ['required', 'string'],
-            'price'       => ['required', 'integer', 'min:0'],
+            'name' => ['required', 'string'],
+            'price' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
-            'status'      => ['nullable', 'boolean'],
+            'status' => ['nullable', 'boolean'],
         ]);
 
         $data['status'] = $data['status'] ?? true;
-
         $service = Service::query()->create($data);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Service created successfully',
-            'data'    => $service,
+            "success" => true,
+            "message" => "Service created successfully",
+            "data" => $service
         ], 201);
     }
 
-    /**
-     * GET /api/services/{id}
-     * Ambil detail service berdasarkan ID
-     */
-    public function show($service): JsonResponse
+    public function show(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
 
         if (!$service) {
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found',
-                'errors'  => [],
+                "success" => false,
+                "message" => "Service not found",
+                "error" => [],
             ], 404);
         }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Service retrieved successfully',
-            'data'    => $service,
+            "success" => true,
+            "message" => "Service retrieved successfully",
+            "data" => $service
         ]);
     }
 
-    /**
-     * PUT/PATCH /api/services/{id}
-     * Update data service
-     */
-    public function update(Request $request, $service): JsonResponse
+    public function update(Request $request, int $service): JsonResponse
     {
         $service = Service::query()->find($service);
 
         if (!$service) {
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found',
-                'errors'  => [],
+                "success" => false,
+                "message" => "Service not found",
+                "error" => [],
             ], 404);
         }
 
         $data = $request->validate([
-            'name'        => ['sometimes', 'string'],
-            'price'       => ['sometimes', 'integer', 'min:0'],
+            'name' => ['sometimes', 'string'],
+            'price' => ['sometimes', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
-            'status'      => ['nullable', 'boolean'],
+            'status' => ['nullable', 'boolean'],
         ]);
 
         $service->update($data);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Service updated successfully',
-            'data'    => $service,
+            "success" => true,
+            "message" => "Service updated successfully",
+            "data" => $service
         ]);
     }
 
-    /**
-     * DELETE /api/services/{id}
-     * Hapus service (tidak bisa dihapus jika punya subscription)
-     */
-    public function destroy($service): JsonResponse
+    public function destroy(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
 
         if (!$service) {
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found',
-                'errors'  => [],
+                "success" => false,
+                "message" => "Service not found",
+                "error" => [],
             ], 404);
         }
 
-        if ($service->subscriptions()->exists()) {
+        if (class_exists('\App\Models\Subscription') && $service->subscriptions()->exists()) {
             return response()->json([
-                'success' => false,
-                'message' => 'Service cannot be deleted because it has subscriptions',
-                'errors'  => [],
-            ], 422);
+                "success" => false,
+                "message" => "Service cannot be deleted because it has active subscriptions",
+                "error" => [],
+            ], 400);
         }
 
         $service->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Service deleted successfully',
-            'data'    => null,
+            "success" => true,
+            "message" => "Service deleted successfully",
+            "data" => null
         ]);
     }
 
-    /**
-     * PATCH /api/services/{id}/activate
-     * Aktifkan service
-     */
-    public function activate($service): JsonResponse
+    public function activate(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
 
         if (!$service) {
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found',
-                'errors'  => [],
+                "success" => false,
+                "message" => "Service not found",
+                "error" => [],
             ], 404);
         }
 
         $service->update(['status' => true]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Service activated successfully',
-            'data'    => $service,
+            "success" => true,
+            "message" => "Service activated successfully",
+            "data" => $service
         ]);
     }
 
-    /**
-     * PATCH /api/services/{id}/deactivate
-     * Nonaktifkan service
-     */
-    public function deactivate($service): JsonResponse
+    public function deactivate(int $service): JsonResponse
     {
         $service = Service::query()->find($service);
 
         if (!$service) {
             return response()->json([
-                'success' => false,
-                'message' => 'Service not found',
-                'errors'  => [],
+                "success" => false,
+                "message" => "Service not found",
+                "error" => [],
             ], 404);
         }
 
         $service->update(['status' => false]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Service deactivated successfully',
-            'data'    => $service,
+            "success" => true,
+            "message" => "Service deactivated successfully",
+            "data" => $service
         ]);
+    }
+
+    public function getByStatus($status)
+    {
+        $is_active = filter_var($status, FILTER_VALIDATE_BOOLEAN);
+        $services = \App\Models\Service::where('status', $is_active)->get();
+        
+        return response()->json(['data' => $services], 200);
+    }
+
+    public function changeStatus(\Illuminate\Http\Request $request, $id)
+    {
+        $request->validate(['status' => 'required|boolean']);
+        
+        $service = \App\Models\Service::findOrFail($id);
+        $service->update(['status' => $request->status]);
+        
+        return response()->json([
+            'message' => 'Status service berhasil diubah', 
+            'data' => $service
+        ], 200);
     }
 }

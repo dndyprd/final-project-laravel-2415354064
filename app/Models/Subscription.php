@@ -17,21 +17,11 @@ class Subscription extends Model
         'status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'start_date' => 'date',
-            'end_date'   => 'date',
-        ];
-    }
-
-    // Relasi ke Customer
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    // Relasi ke Service
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

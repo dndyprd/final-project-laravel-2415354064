@@ -1,0 +1,71 @@
+@extends('app')
+
+@section('title', 'Subscriptions')
+@section('page-title', 'Subscriptions')
+
+@section('content')
+
+<div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+    <table class="w-full border-collapse">
+        <thead>
+            <tr class="border-b border-gray-200">
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Customer Name</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Services</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Services Period</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($subscriptions as $sub)
+            <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
+
+                <td class="px-5 py-4 text-sm text-gray-800">{{ $sub->customer?->name ?? '-' }}</td>
+                <td class="px-5 py-4 text-sm text-gray-800">{{ $sub->service?->name ?? '-' }}</td>
+
+                <td class="px-5 py-4 text-sm text-gray-600">
+                    {{ \Carbon\Carbon::parse($sub->start_date)->format('j M Y') }}
+                    –
+                    {{ \Carbon\Carbon::parse($sub->end_date)->format('j M Y') }}
+                </td>
+
+                <td class="px-5 py-4">
+                    @php
+                        $statusMap = [
+                            'active'    => ['label' => 'Active',    'class' => 'bg-green-100 text-green-700'],
+                            'trial'     => ['label' => 'Trial',     'class' => 'bg-yellow-100 text-yellow-700'],
+                            'isolir'    => ['label' => 'Isolir',    'class' => 'bg-red-100 text-red-600'],
+                            'dismantle' => ['label' => 'Dismantle', 'class' => 'bg-gray-100 text-gray-500'],
+                            'inactive'  => ['label' => 'Inactive',  'class' => 'bg-gray-100 text-gray-500'],
+                        ];
+                        $badge = $statusMap[strtolower($sub->status)] ?? ['label' => ucfirst($sub->status), 'class' => 'bg-gray-100 text-gray-500'];
+                    @endphp
+                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold {{ $badge['class'] }}">
+                        {{ $badge['label'] }}
+                    </span>
+                </td>
+
+                @include('function', [
+                    'resource' => 'subscriptions',
+                    'id'       => $sub->id,
+                    'actions'  => [
+                        ['icon' => 'bx-key',      'label' => 'Active',     'action' => 'status:active'],
+                        ['icon' => 'bx-power-off', 'label' => 'Deactivate', 'action' => 'status:inactive'],
+                        ['icon' => 'bx-time',     'label' => 'Trial',      'action' => 'status:trial'],
+                        ['icon' => 'bx-block',    'label' => 'Isolir',     'action' => 'status:isolir'],
+                        ['icon' => 'bx-x-circle', 'label' => 'Dismantle',  'action' => 'status:dismantle', 'danger' => true],
+                    ],
+                ])
+            </tr>
+            @empty
+            <tr>
+                <td colspan="5" class="px-5 py-16 text-center text-sm text-gray-400">
+                    Belum ada data subscription.
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+@endsection
