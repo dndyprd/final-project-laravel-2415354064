@@ -92,27 +92,25 @@
 
         {{-- Content --}}
         <main class="flex-1 overflow-y-auto p-7">
-            {{-- Tombol Add Data --}}
-            <div class="flex justify-end mb-5">
-                <button class="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold
-                            px-4 py-2.5 rounded-lg hover:bg-gray-700 active:scale-95 transition-all">
-                    <i class='bx bx-plus text-base'></i>
-                    Add Data
-                </button>
-            </div>
-
             @yield('content')
         </main>
 
     </div>
+
+    {{-- Modal shell (template design) --}}
+    @include('modal')
 
     @stack('scripts')
 
     <script>
         (() => {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+            /* ════════════════════════════════════════════
+               DROPDOWN ACTION
+            ════════════════════════════════════════════ */
             document.addEventListener('click', e => {
-                const trigger = e.target.closest('.action-trigger');
+                const trigger  = e.target.closest('.action-trigger');
                 const allMenus = document.querySelectorAll('.action-menu:not(.hidden)');
 
                 if (trigger) {
@@ -131,35 +129,28 @@
             document.addEventListener('click', async e => {
                 const btn = e.target.closest('.dropdown-action');
                 if (!btn) return;
-
                 e.stopPropagation();
 
                 const { resource, action, id } = btn.dataset;
-
                 btn.closest('.action-menu').classList.add('hidden');
 
                 if (action === 'edit') {
                     document.dispatchEvent(new CustomEvent('erp:edit', { detail: { resource, id } }));
                     return;
                 }
-
                 if (action === 'delete') {
-                    if (!confirm(`Hapus data ini?`)) return;
+                    if (!confirm('Hapus data ini?')) return;
                     await apiFetch(`/api/${resource}/${id}`, 'DELETE');
                     return;
                 }
-
                 if (action === 'activate') {
                     await apiFetch(`/api/${resource}/${id}/activate`, 'PATCH');
                     return;
                 }
-
                 if (action === 'deactivate') {
                     await apiFetch(`/api/${resource}/${id}/deactivate`, 'PATCH');
                     return;
                 }
-
-                /* Pola status:{value} — contoh: status:trial */
                 if (action.startsWith('status:')) {
                     const status = action.split(':')[1];
                     await apiFetch(`/api/${resource}/${id}/status`, 'PATCH', { status });
@@ -167,6 +158,59 @@
                 }
             });
 
+            // MODAL
+            const modal       = document.getElementById('erp-modal');
+            const modalTitle  = document.getElementById('erp-modal-title');
+            const modalBody   = document.getElementById('erp-modal-body');
+            const modalCancel = document.getElementById('erp-modal-cancel');
+            const modalSubmit = document.getElementById('erp-modal-submit');
+            const backdrop    = document.getElementById('erp-modal-backdrop');
+
+            function openModal() {
+                const tpl = document.getElementById('erp-modal-tpl');
+                if (!tpl) return;
+
+                modalTitle.textContent = tpl.dataset.title ?? '';
+                modalBody.innerHTML = '';
+                modalBody.appendChild(tpl.content.cloneNode(true));
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.classList.remove('overflow-hidden');
+                modalBody.innerHTML = '';
+            }
+
+            document.addEventListener('click', e => {
+                if (e.target.closest('[data-open-modal]')) openModal();
+            });
+
+            modalCancel.addEventListener('click', closeModal);
+            backdrop.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            modalSubmit.addEventListener('click', async () => {
+                const form = modalBody.querySelector('form[data-endpoint]');
+                if (!form) return;
+
+                const endpoint = form.dataset.endpoint;
+                const method   = (form.dataset.method ?? 'POST').toUpperCase();
+
+                const payload = {};
+                new FormData(form).forEach((val, key) => { payload[key] = val; });
+
+                await apiFetch(endpoint, method, payload);
+            });
+
+            // HELPER FETCH
             async function apiFetch(url, method, body = null) {
                 try {
                     const opts = {

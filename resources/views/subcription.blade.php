@@ -5,6 +5,87 @@
 
 @section('content')
 
+{{-- Tombol Add Data --}}
+<div class="flex justify-end mb-5">
+    <button data-open-modal
+            id="btn-add-subscription"
+            class="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold
+                   px-4 py-2.5 rounded-lg hover:bg-gray-700 active:scale-95 transition-all">
+        <i class='bx bx-plus text-base'></i>
+        Add Data
+    </button>
+</div>
+
+{{-- Template form Add Subscription — hanya dibaca JS, tidak dirender ke UI --}}
+<template id="erp-modal-tpl" data-title="Add Subscription">
+    <form data-endpoint="/api/subscriptions" data-method="POST" class="space-y-5">
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Customer</label>
+            <div class="relative">
+                <select name="customer_id"
+                        class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500
+                               focus:outline-none focus:ring-2 focus:ring-gray-300 appearance-none">
+                    <option value="" disabled selected>Select Customer</option>
+                    @foreach($allCustomers as $c)
+                        <option value="{{ $c->id }}">{{ $c->name }}</option>
+                    @endforeach
+                </select>
+                <i class='bx bx-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'></i>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Service</label>
+            <div class="relative">
+                <select name="service_id"
+                        class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500
+                               focus:outline-none focus:ring-2 focus:ring-gray-300 appearance-none">
+                    <option value="" disabled selected>Select Service</option>
+                    @foreach($allServices as $s)
+                        <option value="{{ $s->id }}">{{ $s->name }}</option>
+                    @endforeach
+                </select>
+                <i class='bx bx-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'></i>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-1.5">Start Date</label>
+                <input type="date" name="start_date"
+                       class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500
+                              focus:outline-none focus:ring-2 focus:ring-gray-300">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-1.5">End Date</label>
+                <input type="date" name="end_date"
+                       class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500
+                              focus:outline-none focus:ring-2 focus:ring-gray-300">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Status</label>
+            <div class="relative">
+                <select name="status"
+                        class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500
+                               focus:outline-none focus:ring-2 focus:ring-gray-300 appearance-none">
+                    <option value="" disabled selected>Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="trial">Trial</option>
+                    <option value="isolir">Isolir</option>
+                    <option value="dismantle">Dismantle</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <i class='bx bx-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'></i>
+            </div>
+        </div>
+
+    </form>
+</template>
+
+{{-- Tabel --}}
 <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
     <table class="w-full border-collapse">
         <thead>
@@ -49,11 +130,11 @@
                     'resource' => 'subscriptions',
                     'id'       => $sub->id,
                     'actions'  => [
-                        ['icon' => 'bx-key',      'label' => 'Active',     'action' => 'status:active'],
-                        ['icon' => 'bx-power-off', 'label' => 'Deactivate', 'action' => 'status:inactive'],
-                        ['icon' => 'bx-time',     'label' => 'Trial',      'action' => 'status:trial'],
-                        ['icon' => 'bx-block',    'label' => 'Isolir',     'action' => 'status:isolir'],
-                        ['icon' => 'bx-x-circle', 'label' => 'Dismantle',  'action' => 'status:dismantle', 'danger' => true],
+                        ['icon' => 'bx-key',       'label' => 'Active',     'action' => 'status:active'],
+                        ['icon' => 'bx-power-off',  'label' => 'Deactivate', 'action' => 'status:inactive'],
+                        ['icon' => 'bx-time',      'label' => 'Trial',      'action' => 'status:trial'],
+                        ['icon' => 'bx-block',     'label' => 'Isolir',     'action' => 'status:isolir'],
+                        ['icon' => 'bx-x-circle',  'label' => 'Dismantle',  'action' => 'status:dismantle', 'danger' => true],
                     ],
                 ])
             </tr>

@@ -16,9 +16,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'budi.santoso@gmail.com',
                 'phone'       => '081234567890',
                 'address'     => 'Jl. Sudirman No. 10, Jakarta Pusat, DKI Jakarta',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0002',
@@ -26,9 +23,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'siti.rahayu@yahoo.com',
                 'phone'       => '082345678901',
                 'address'     => 'Jl. Gatot Subroto No. 25, Bandung, Jawa Barat',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0003',
@@ -36,9 +30,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'ahmad.fauzi@outlook.com',
                 'phone'       => '083456789012',
                 'address'     => 'Jl. Pemuda No. 5, Surabaya, Jawa Timur',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0004',
@@ -46,9 +37,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'dewi.lestari@gmail.com',
                 'phone'       => '084567890123',
                 'address'     => 'Jl. Diponegoro No. 88, Yogyakarta, DIY',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0005',
@@ -56,9 +44,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'rizky.pratama@gmail.com',
                 'phone'       => '085678901234',
                 'address'     => 'Jl. Ahmad Yani No. 33, Medan, Sumatera Utara',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0006',
@@ -66,9 +51,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'rina.marlina@gmail.com',
                 'phone'       => '086789012345',
                 'address'     => 'Jl. Raya Kuta No. 12, Kuta, Bali',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0007',
@@ -76,9 +58,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'hendra.gunawan@gmail.com',
                 'phone'       => '087890123456',
                 'address'     => 'Jl. Veteran No. 7, Makassar, Sulawesi Selatan',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0008',
@@ -86,9 +65,7 @@ class CustomerSeeder extends Seeder
                 'email'       => 'nurul.hidayah@gmail.com',
                 'phone'       => '088901234567',
                 'address'     => 'Jl. Imam Bonjol No. 45, Semarang, Jawa Tengah',
-                'status'      => false, // nonaktif
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'status'      => false,
             ],
             [
                 'customer_id' => 'CUST-0009',
@@ -96,9 +73,6 @@ class CustomerSeeder extends Seeder
                 'email'       => 'farhan.maulana@gmail.com',
                 'phone'       => '089012345678',
                 'address'     => 'Jl. Pahlawan No. 19, Palembang, Sumatera Selatan',
-                'status'      => true,
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             [
                 'customer_id' => 'CUST-0010',
@@ -106,9 +80,7 @@ class CustomerSeeder extends Seeder
                 'email'       => 'yuliana.putri@gmail.com',
                 'phone'       => '081122334455',
                 'address'     => 'Jl. Raya Darmo No. 60, Surabaya, Jawa Timur',
-                'status'      => false, // nonaktif
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'status'      => false,
             ],
         ];
 

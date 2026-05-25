@@ -69,16 +69,16 @@ class CustomerController extends Controller
     public function getByStatus($status)
     {
         $is_active = filter_var($status, FILTER_VALIDATE_BOOLEAN);
-        $customers = \App\Models\Customer::where('status', $is_active)->get();
+        $customers = Customer::where('status', $is_active)->get();
         
         return response()->json(['data' => $customers], 200);
     }
 
-    public function changeStatus(\Illuminate\Http\Request $request, $id)
+    public function changeStatus(Request $request, $id)
     {
         $request->validate(['status' => 'required|boolean']);
         
-        $customer = \App\Models\Customer::findOrFail($id);
+        $customer = Customer::findOrFail($id);
         $customer->update(['status' => $request->status]);
         
         return response()->json([

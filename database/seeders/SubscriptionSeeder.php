@@ -17,8 +17,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-01-01',
                 'end_date'    => '2025-01-01',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Budi Santoso → Domain .COM (active)
             [
@@ -27,8 +25,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-01-01',
                 'end_date'    => '2025-01-01',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Siti Rahayu → VPS Starter (active)
             [
@@ -37,8 +33,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-03-15',
                 'end_date'    => '2025-03-15',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Siti Rahayu → SSL Certificate Standard (active)
             [
@@ -47,8 +41,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-03-15',
                 'end_date'    => '2025-03-15',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Ahmad Fauzi → VPS Business (trial)
             [
@@ -57,8 +49,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2025-01-10',
                 'end_date'    => '2025-02-10',
                 'status'      => 'trial',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Dewi Lestari → Email Hosting Business (active)
             [
@@ -67,8 +57,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-06-01',
                 'end_date'    => '2025-06-01',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Dewi Lestari → Domain .ID (active)
             [
@@ -77,8 +65,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-06-01',
                 'end_date'    => '2025-06-01',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Rizky Pratama → Shared Hosting Pro (isolir)
             [
@@ -87,8 +73,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2023-08-01',
                 'end_date'    => '2024-08-01',
                 'status'      => 'isolir',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Rina Marlina → SSL Premium Wildcard (active)
             [
@@ -97,8 +81,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-09-01',
                 'end_date'    => '2025-09-01',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Hendra Gunawan → VPS Starter (inactive)
             [
@@ -107,8 +89,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2023-05-01',
                 'end_date'    => '2024-05-01',
                 'status'      => 'inactive',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Nurul Hidayah → Shared Hosting Basic (dismantle)
             [
@@ -117,8 +97,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2022-01-01',
                 'end_date'    => '2023-01-01',
                 'status'      => 'dismantle',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Farhan Maulana → Domain .COM (trial)
             [
@@ -127,8 +105,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2025-01-20',
                 'end_date'    => '2025-02-20',
                 'status'      => 'trial',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
             // Farhan Maulana → Email Hosting Business (active)
             [
@@ -137,8 +113,6 @@ class SubscriptionSeeder extends Seeder
                 'start_date'  => '2024-11-01',
                 'end_date'    => '2025-11-01',
                 'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
             ],
         ];
 
